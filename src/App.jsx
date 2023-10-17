@@ -7,7 +7,7 @@ function App() {
     {
       path: "/",
       element: <Landing />,
-    },
+    }
   ]);
 
   return (
