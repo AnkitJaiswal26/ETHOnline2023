@@ -1,9 +1,12 @@
 import React from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
+import Navbar from '../../components/Navbar/Navbar';
 
 const CreateBorrow = () => {
   return (
+    <>
+    <Navbar/>
 <div>
 
     <section class="max-w-4xl p-6 mx-auto bg-indigo-600 rounded-md shadow-md dark:bg-gray-800 mt-20">
@@ -123,6 +126,7 @@ const CreateBorrow = () => {
 </section>
 
 </div>
+</>
   )
 }
 
