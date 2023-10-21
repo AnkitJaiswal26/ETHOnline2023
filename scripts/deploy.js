@@ -1,7 +1,8 @@
-const hre = require("hardhat");
+const ethers = require("hardhat").ethers;
+// import hre from "hardhat";
 
 async function main() {
-    const loanContract = await hre.ethers.deployContract("LoanContract");
+    const loanContract = await ethers.deployContract("LoanContract", { gasLimit: "0x1000000" });
     await loanContract.waitForDeployment();
     console.log(`Contract deployed to address: ${loanContract.target}`);
 }
