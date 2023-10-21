@@ -1,3 +1,5 @@
+require("@nomicfoundation/hardhat-toolbox");
+
 module.exports = {
     solidity: {
         version: "0.8.20",
@@ -15,5 +17,13 @@ module.exports = {
             ],
             allowUnlimitedContractSize: true,
         },
+        mantle: {
+			url: `https://rpc.testnet.mantle.xyz/`,
+			accounts: [
+				"0x1bd3b7611b82c149076b88c86d926cf48b126f18d91f63a4d7c9f427cfb17666",
+			],
+			chainId: 5001,
+			allowUnlimitedContractSize: true,
+		},
     },
 };
