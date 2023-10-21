@@ -28,7 +28,7 @@ export const LoanContextProvider = ({ children }) => {
     try {
       const web3Modal = new Wenb3Model();
       const connection = await web3Modal.connect();
-      const provider = new ethers.providers.Web3Provider(connection);
+      const provider = new ethers.BrowserProvider(connection);
       const signer = provider.getSigner();
       const contract = fetchContract(signer);
       return contract;
