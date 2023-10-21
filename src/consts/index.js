@@ -1,36 +1,37 @@
 import {
-  ArrowPathIcon,
-  CloudArrowUpIcon,
-  FingerPrintIcon,
-  LockClosedIcon,
+  ComputerDesktopIcon,
+  DocumentChartBarIcon,
+  ScaleIcon,
+  UsersIcon,
 } from "@heroicons/react/24/outline";
 
 export const features = [
   {
-    name: "Push to deploy",
+    name: "Tailor-Made Solutions",
     description:
-      "Morbi viverra dui mi arcu sed. Tellus semper adipiscing suspendisse semper morbi. Odio urna massa nunc massa.",
-    icon: CloudArrowUpIcon,
+      "Create custom lending agreements by choosing collateral, interest rate, duration, installments, and the crypto asset of your choice.",
+    icon: ComputerDesktopIcon, // Use an appropriate icon
   },
   {
-    name: "SSL certificates",
+    name: "Financial NFTs",
     description:
-      "Sit quis amet rutrum tellus ullamcorper ultricies libero dolor eget. Sem sodales gravida quam turpis enim lacus amet.",
-    icon: LockClosedIcon,
+      "The app mints a unique NFT for each party in the agreement, whether it's a loan or debt. These financial NFTs represent ownership in the agreement.",
+    icon: DocumentChartBarIcon, // Use an appropriate icon
   },
   {
-    name: "Simple queues",
+    name: "Secondary Market Trading",
     description:
-      "Quisque est vel vulputate cursus. Risus proin diam nunc commodo. Lobortis auctor congue commodo diam neque.",
-    icon: ArrowPathIcon,
+      "Trade your financial NFTs on secondary markets. This opens up opportunities for various financial products and allows users to exit agreements at market prices.",
+    icon: ScaleIcon, // Use an appropriate icon
   },
   {
-    name: "Advanced security",
+    name: "P2P and No Intermediaries",
     description:
-      "Arcu egestas dolor vel iaculis in ipsum mauris. Tincidunt mattis aliquet hac quis. Id hac maecenas ac donec pharetra eget.",
-    icon: FingerPrintIcon,
+      "The platform operates as a true P2P lending solution with no intermediaries. This results in better rates and direct interaction between parties.",
+    icon: UsersIcon, // Use an appropriate icon
   },
 ];
+
 
 export const offers = [
   {
