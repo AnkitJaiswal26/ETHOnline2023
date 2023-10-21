@@ -1,7 +1,7 @@
-// import safeInsure from "../artifacts/contracts/SafeInsure.sol/SafeInsure.json";
+import loanContract from "../artifacts/contracts/LoanContract.sol/LoanContract.json";
 
-// export const SafeInsureAddress = "0x8D739CB3665c39625A3FC740fdCD52040F004bC5";
-// export const SafeInsureABI = safeInsure.abi;
+export const LoanContractAddress = "0x108A19d630bd6a11EB259Ca9DB972B608fEB1837";
+export const LoanContractABI = loanContract.abi;
 
 export const ChainId = {
     MAINNET: 1,
