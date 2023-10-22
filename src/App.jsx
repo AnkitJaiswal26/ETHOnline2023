@@ -7,6 +7,7 @@ import BorrowOffer from "./pages/BorrowOffer";
 import Marketplace from "./pages/Marketplace";
 import Dashboard from "./pages/Dashboard";
 import NFTDetails from "./pages/Marketplace/NFTDetails";
+import Register from "./pages/Register/Register";
 
 function App() {
   const router = createBrowserRouter([
@@ -15,12 +16,16 @@ function App() {
       element: <Landing />,
     },
     {
+      path: "/register",
+      element: <Register />,
+    },
+    {
       path: "/create",
       element: <CreateBorrow />,
     },
     {
       path: "/lend",
-      element:<LendOffer/>,
+      element: <LendOffer />,
     },
     // {
     //   path: "/lend/:id",
@@ -28,7 +33,7 @@ function App() {
     // }
     {
       path: "/borrow",
-      element: <BorrowOffer/>,
+      element: <BorrowOffer />,
     },
     // {
     //   path: "/borrow/:id",
@@ -36,17 +41,16 @@ function App() {
     // }
     {
       path: "/marketplace",
-      element: <Marketplace/>,
+      element: <Marketplace />,
     },
     {
       path: "/marketplace/:id",
-      element: <NFTDetails/>,
+      element: <NFTDetails />,
     },
     {
       path: "/dashboard",
-      element: <Dashboard/>
-    }
-
+      element: <Dashboard />,
+    },
   ]);
 
   return (

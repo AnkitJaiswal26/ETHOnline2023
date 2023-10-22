@@ -20,7 +20,7 @@ const {
     fetchSpecificBorrowAmountByBorrower,
 } = require("../controllers/user.controller");
 
-router.post("/addUser", addUser);
+router.post("/register", addUser);
 router.get("/getUserInfo/{accountAddress}", getUserInfo);
 router.get("/getUserById/{userId}", getUserById);
 router.post("/addLendAmount", addLendAmount);

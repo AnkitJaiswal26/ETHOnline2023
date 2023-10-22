@@ -75,9 +75,9 @@ const Navbar = () => {
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
             {/* Connect wallet function to be added on this  */}
             <a
-              href="#"
+              href="/register"
               className="text-sm font-semibold leading-6 text-gray-900"
-              onClick={()=>handleLogin()}
+              // onClick={()=>handleLogin()}
             >
               Log in <span aria-hidden="true">&rarr;</span>
             </a>
@@ -150,9 +150,9 @@ const Navbar = () => {
                 </div>
                 <div className="py-6">
                   <a
-                    href="#"
+                    href="/register"
                     className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                    onClick={()=>handleLogin()}
+                    // onClick={()=>handleLogin()}
                   >
                     Log in
                   </a>

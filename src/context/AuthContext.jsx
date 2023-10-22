@@ -22,9 +22,9 @@ export const AuthContextProvider = ({ children }) => {
       });
       if (accounts.length) {
         setCurrentAccount(accounts[0]);
-        axiosInstance.get("/getUserInfo").then((res) => {
-          setUser(res.data.user);
-        });
+        // axiosInstance.get("/getUserInfo").then((res) => {
+        //   setUser(res.data.user);
+        // });
         console.log("Current Account", currentAccount);
       } else {
         console.log("No accounts found!");
