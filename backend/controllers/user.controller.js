@@ -3,10 +3,9 @@ const jwt = require("jsonwebtoken");
 const { ethers } = require("ethers");
 const { Database } = require("@tableland/sdk");
 
-const usersTable = "users_80001_6990";
-const lendersTable = "creators_80001_6991";
-const borrowsTable = "projects_80001_6992";
-const membersTable = "members_80001_6993";
+const usersTable = "users_table_80001_8191";
+const lendersTable = "lenders_table_80001_8190";
+const borrowsTable = "borrows_table_80001_8189";
 
 const privateKey =
   "0x7a62aa11fa06bc5f21ef8819674ce87876b678f7e288b9c8347fdd3eff7faf89";
@@ -17,12 +16,12 @@ const wallet = new ethers.Wallet(privateKey, provider);
 const signer = wallet.connect(provider);
 const db = new Database({ signer });
 
-exports.addUser = async (req, res) => {
-  try {
-    const { username, email, accountAddress } = req.body;
-    const { results } = await db
-      .prepare(`SELECT * FROM ${usersTable} WHERE emailId='${email}';`)
-      .all();
+exports.addUser = async(req, res) => {
+    try {
+        const { username, email, accountAddress } = req.body;
+        const { results } = await db
+            .prepare(`SELECT * FROM ${usersTable} WHERE email='${email}';`)
+            .all();
 
     if (results.length === 0) {
       const data = await db.prepare(`SELECT * FROM ${usersTable};`).all();
@@ -50,14 +49,14 @@ exports.addUser = async (req, res) => {
   }
 };
 
-exports.getUserInfo = async (req, res) => {
-  try {
-    const { accountAddress } = req.params;
-    const { results } = await db
-      .prepare(
-        `SELECT * FROM ${usersTable} WHERE accountAddress='${accountAddress}';`
-      )
-      .all();
+exports.getUserInfo = async(req, res) => {
+    try {
+        const { accountAddress } = req.params;
+        const { results } = await db
+            .prepare(
+                `SELECT * FROM ${usersTable} WHERE account_address='${accountAddress}';`
+            )
+            .all();
 
     if (results.length !== 0) {
       return res.status(200).json({
@@ -110,6 +109,7 @@ exports.addLendAmount = async (req, res) => {
 
     const data1 = await db.prepare(`SELECT * FROM ${lendersTable};`).all();
 
+<<<<<<< HEAD
     const { meta: insert } = await db
       .prepare(
         `INSERT INTO ${lendersTable} (id, userId, amount, interest, duration, startDate, endDate, isPaid, collateral) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);`
@@ -126,6 +126,23 @@ exports.addLendAmount = async (req, res) => {
         collateral
       )
       .run();
+=======
+        const { meta: insert } = await db
+            .prepare(
+                `INSERT INTO ${lendersTable} (id, userId, amount, interest, start_date, end_date, isPaid, collateral) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);`
+            )
+            .bind(
+                data1.results.length + 1,
+                userId,
+                amount,
+                interest,
+                startDate,
+                endDate,
+                false,
+                collateral
+            )
+            .run();
+>>>>>>> 074dfe200fa68d58b55f91473902a36ac25ab553
 
     await insert.txn.wait();
 
@@ -142,6 +159,7 @@ exports.addLendAmount = async (req, res) => {
   }
 };
 
+<<<<<<< HEAD
 exports.addBorrowAmount = async (req, res) => {
   try {
     const {
@@ -153,9 +171,22 @@ exports.addBorrowAmount = async (req, res) => {
       endDate,
       collateral,
     } = req.body;
+=======
+exports.addBorrowAmount = async(req, res) => {
+    try {
+        const {
+            userId,
+            amount,
+            interest,
+            startDate,
+            endDate,
+            collateral,
+        } = req.body;
+>>>>>>> 074dfe200fa68d58b55f91473902a36ac25ab553
 
     const data1 = await db.prepare(`SELECT * FROM ${borrowsTable};`).all();
 
+<<<<<<< HEAD
     const { meta: insert } = await db
       .prepare(
         `INSERT INTO ${borrowsTable} (id, userId, amount, interest, duration, startDate, endDate, isPaid, collateral) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);`
@@ -172,6 +203,23 @@ exports.addBorrowAmount = async (req, res) => {
         collateral
       )
       .run();
+=======
+        const { meta: insert } = await db
+            .prepare(
+                `INSERT INTO ${borrowsTable} (id, user_id, amount, interest, start_date, end_date, is_paid, collateral) VALUES (?, ?, ?, ?, ?, ?, ?, ?);`
+            )
+            .bind(
+                data1.results.length + 1,
+                userId,
+                amount,
+                interest,
+                startDate,
+                endDate,
+                false,
+                collateral
+            )
+            .run();
+>>>>>>> 074dfe200fa68d58b55f91473902a36ac25ab553
 
     await insert.txn.wait();
 
