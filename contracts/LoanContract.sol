@@ -4,6 +4,7 @@ pragma solidity ^0.8.20;
 // import "hardhat/console.sol";
 
 import "./NFT.sol";
+import "./RestrictHook.sol";
 
 contract LoanContract {
 
@@ -133,6 +134,9 @@ contract LoanContract {
         borrowerNFTCount++;
         
         payable(_borrowerAddress).transfer(la.amount);
+
+        RestrictHook.addToRestrictList(_borrowerAddress);
+        RestrictHook.addToRestrictList(_lenderAddress);
         
     }
 
@@ -168,6 +172,9 @@ contract LoanContract {
         borrowerNFTCount++;
         
         payable(_borrowerAddress).transfer(ba.amount);
+
+        RestrictHook.addToRestrictList(_borrowerAddress);
+        RestrictHook.addToRestrictList(_lenderAddress);
         
     }
 

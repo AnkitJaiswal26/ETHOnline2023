@@ -9,7 +9,9 @@ module.exports = {
         artifacts: "./src/artifacts",
     },
     networks: {
-        hardhat: {},
+        hardhat: {
+            enableTransientStorage: true,
+        },
         polygon_mumbai: {
             url: `https://polished-attentive-film.matic-testnet.discover.quiknode.pro/30b6d013db1d5594d93f664dccea8fca81ca5b56/`,
             accounts: [
