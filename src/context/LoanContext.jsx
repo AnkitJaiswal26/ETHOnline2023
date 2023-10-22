@@ -58,126 +58,70 @@ export const LoanContextProvider = ({ children }) => {
     await contract.addUser(userName, userAddress);
   };
 
-  const addLendAmount = async (
-    userAddress,
-    amount,
-    interest,
-    duration,
-    startDate,
-    endDate,
-    collateral
-  ) => {
+  const addLendAmount = async (amount) => {
     const contract = await connectingWithSmartContract();
-    await contract.addLendAmount(
-      userAddress,
-      amount,
-      interest,
-      duration,
-      startDate,
-      endDate,
-      collateral
-    );
+    await contract.addLendAmount();
   };
 
-  const addBorrowAmount = async (
-    userAddress,
-    amount,
-    interest,
-    duration,
-    startDate,
-    endDate,
-    collateral
-  ) => {
+  const addBorrowAmount = async (collateral) => {
     const contract = await connectingWithSmartContract();
-    await contract.addBorrowAmount(
-      userAddress,
-      amount,
-      interest,
-      duration,
-      startDate,
-      endDate,
-      collateral
-    );
+    await contract.addBorrowAmount({
+      // value: ethers.utils.parseEther(collateral * 0.001),
+    });
   };
 
   const acceptLenderOffer = async (
     lenderAddress,
     borrowerAddress,
-    lendAmountId
+    lenderId,
+    borrowerId,
+    amount,
+    interest,
+    duration,
+    startDate,
+    endDate,
+    collateral
   ) => {
     const contract = await connectingWithSmartContract();
     await contract.acceptLenderOffer(
       lenderAddress,
       borrowerAddress,
-      lendAmountId
+      lenderId,
+      borrowerId,
+      amount,
+      interest,
+      duration,
+      startDate,
+      endDate,
+      collateral
     );
   };
 
   const acceptBorrowerOffer = async (
     lenderAddress,
     borrowerAddress,
-    borrowAmountId
+    lenderId,
+    borrowerId,
+    amount,
+    interest,
+    duration,
+    startDate,
+    endDate,
+    collateral
   ) => {
     const contract = await connectingWithSmartContract();
     await contract.acceptBorrowerOffer(
       lenderAddress,
       borrowerAddress,
-      borrowAmountId
+      lenderId,
+      borrowerId,
+      amount,
+      interest,
+      duration,
+      startDate,
+      endDate,
+      collateral
     );
-  };
-
-  const fetchLendAmountByLender = async (lenderAddress) => {
-    const contract = await connectingWithSmartContract();
-    const data = await contract.fetchLendAmountByLender(lenderAddress);
-    return data;
-  };
-
-  const fetchTotalLendAmountsLendAmounts = async () => {
-    const contract = await connectingWithSmartContract();
-    const data = await contract.fetchTotalLendAmountsLendAmounts();
-    return data;
-  };
-
-  const fetchTotalBorrowAmounts = async () => {
-    const contract = await connectingWithSmartContract();
-    const data = await contract.fetchTotalBorrowAmounts();
-    return data;
-  };
-
-  const fetchLendAmountById = async (lendAmountId) => {
-    const contract = await connectingWithSmartContract();
-    const data = await contract.fetchLendAmountById(lendAmountId);
-    return data;
-  };
-
-  const fetchBorrowAmountById = async (borrowAmountId) => {
-    const contract = await connectingWithSmartContract();
-    const data = await contract.fetchBorrowAmountById(borrowAmountId);
-    return data;
-  };
-
-  const fetchSpecificLendAmountByLender = async (
-    lenderAddress,
-    lendAmountId
-  ) => {
-    const contract = await connectingWithSmartContract();
-    const data = await contract.fetchSpecificLendAmountByLender(
-      lenderAddress,
-      lendAmountId
-    );
-    return data;
-  };
-
-  const fetchSpecificLendAmountByBorrower = async (
-    borrowerAddress,
-    borrowAmountId
-  ) => {
-    const contract = await connectingWithSmartContract();
-    const data = await contract.fetchSpecificLendAmountByBorrower(
-      borrowerAddress,
-      borrowAmountId
-    );
-    return data;
   };
 
   const fetchLenderNFTs = async (lenderAddress) => {
@@ -204,6 +148,16 @@ export const LoanContextProvider = ({ children }) => {
     return data;
   };
 
+  const finalPayment = async (id) => {
+    const contract = await connectingWithSmartContract();
+    await contract.finalPayment(id);
+  };
+
+  const createSale = async (id, price) => {
+    const contract = await connectingWithSmartContract();
+    await contract.createSale(id, price);
+  };
+
   return (
     <LoanContext.Provider
       value={{
@@ -214,17 +168,12 @@ export const LoanContextProvider = ({ children }) => {
         addBorrowAmount,
         acceptLenderOffer,
         acceptBorrowerOffer,
-        fetchLendAmountByLender,
-        fetchTotalLendAmountsLendAmounts,
-        fetchTotalBorrowAmounts,
-        fetchLendAmountById,
-        fetchBorrowAmountById,
-        fetchSpecificLendAmountByLender,
-        fetchSpecificLendAmountByBorrower,
         fetchLenderNFTs,
         fetchBorrowerNFTs,
         fetchLenderTotalNFTs,
         fetchBorrowerTotalNFTs,
+        finalPayment,
+        createSale,
       }}
     >
       {children}

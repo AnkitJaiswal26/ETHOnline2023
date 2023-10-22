@@ -148,7 +148,6 @@ exports.addBorrowAmount = async(req, res) => {
             userId,
             amount,
             interest,
-            duration,
             startDate,
             endDate,
             collateral,
@@ -158,14 +157,13 @@ exports.addBorrowAmount = async(req, res) => {
 
         const { meta: insert } = await db
             .prepare(
-                `INSERT INTO ${borrowsTable} (id, userId, amount, interest, duration, startDate, endDate, isPaid, collateral) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);`
+                `INSERT INTO ${borrowsTable} (id, userId, amount, interest, startDate, endDate, isPaid, collateral) VALUES (?, ?, ?, ?, ?, ?, ?, ?);`
             )
             .bind(
                 data1.results.length + 1,
                 userId,
                 amount,
                 interest,
-                duration,
                 startDate,
                 endDate,
                 false,
