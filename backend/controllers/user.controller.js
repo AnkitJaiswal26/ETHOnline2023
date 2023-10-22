@@ -109,24 +109,6 @@ exports.addLendAmount = async (req, res) => {
 
     const data1 = await db.prepare(`SELECT * FROM ${lendersTable};`).all();
 
-<<<<<<< HEAD
-    const { meta: insert } = await db
-      .prepare(
-        `INSERT INTO ${lendersTable} (id, userId, amount, interest, duration, startDate, endDate, isPaid, collateral) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);`
-      )
-      .bind(
-        data1.results.length + 1,
-        userId,
-        amount,
-        interest,
-        duration,
-        startDate,
-        endDate,
-        false,
-        collateral
-      )
-      .run();
-=======
         const { meta: insert } = await db
             .prepare(
                 `INSERT INTO ${lendersTable} (id, userId, amount, interest, start_date, end_date, isPaid, collateral) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);`
@@ -142,7 +124,6 @@ exports.addLendAmount = async (req, res) => {
                 collateral
             )
             .run();
->>>>>>> 074dfe200fa68d58b55f91473902a36ac25ab553
 
     await insert.txn.wait();
 
@@ -159,19 +140,6 @@ exports.addLendAmount = async (req, res) => {
   }
 };
 
-<<<<<<< HEAD
-exports.addBorrowAmount = async (req, res) => {
-  try {
-    const {
-      userId,
-      amount,
-      interest,
-      duration,
-      startDate,
-      endDate,
-      collateral,
-    } = req.body;
-=======
 exports.addBorrowAmount = async(req, res) => {
     try {
         const {
@@ -182,28 +150,9 @@ exports.addBorrowAmount = async(req, res) => {
             endDate,
             collateral,
         } = req.body;
->>>>>>> 074dfe200fa68d58b55f91473902a36ac25ab553
 
     const data1 = await db.prepare(`SELECT * FROM ${borrowsTable};`).all();
 
-<<<<<<< HEAD
-    const { meta: insert } = await db
-      .prepare(
-        `INSERT INTO ${borrowsTable} (id, userId, amount, interest, duration, startDate, endDate, isPaid, collateral) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);`
-      )
-      .bind(
-        data1.results.length + 1,
-        userId,
-        amount,
-        interest,
-        duration,
-        startDate,
-        endDate,
-        false,
-        collateral
-      )
-      .run();
-=======
         const { meta: insert } = await db
             .prepare(
                 `INSERT INTO ${borrowsTable} (id, user_id, amount, interest, start_date, end_date, is_paid, collateral) VALUES (?, ?, ?, ?, ?, ?, ?, ?);`
@@ -219,7 +168,6 @@ exports.addBorrowAmount = async(req, res) => {
                 collateral
             )
             .run();
->>>>>>> 074dfe200fa68d58b55f91473902a36ac25ab553
 
     await insert.txn.wait();
 
