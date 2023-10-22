@@ -39,6 +39,7 @@ export const AuthContextProvider = ({ children }) => {
       value={{
         checkIfWalletConnected,
         currentAccount,
+        user,
       }}
     >
       {children}
