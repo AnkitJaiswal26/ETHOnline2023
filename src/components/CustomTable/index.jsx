@@ -1,7 +1,10 @@
 import React from "react";
+import { timeConverter } from "../../helpers";
 
-const CustomTable = ({ data, lengthCols, skipCols }) => {
-  const headers = Object.keys(data[0]).filter((item) => !skipCols.includes(item));
+const CustomTable = ({ data, lengthCols, skipCols, convertTime }) => {
+  const headers = Object.keys(data[0]).filter(
+    (item) => !skipCols.includes(item)
+  );
   return (
     <table className="min-w-full divide-y divide-gray-200">
       <thead>
@@ -26,7 +29,11 @@ const CustomTable = ({ data, lengthCols, skipCols }) => {
                 key={key}
                 className="px-6 py-4 text-sm leading-5 text-gray-900"
               >
-                {lengthCols.includes(key) ? item[key].length : item[key]}
+                {convertTime?.includes(key)
+                  ? timeConverter(item[key])
+                  : lengthCols?.includes(key)
+                  ? item[key].length
+                  : item[key]}
               </td>
             ))}
           </tr>

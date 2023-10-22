@@ -6,6 +6,7 @@ import LendOffer from "./pages/LendOffer";
 import BorrowOffer from "./pages/BorrowOffer";
 import Marketplace from "./pages/Marketplace";
 import Dashboard from "./pages/Dashboard";
+import NFTDetails from "./pages/Marketplace/NFTDetails";
 
 function App() {
   const router = createBrowserRouter([
@@ -36,6 +37,10 @@ function App() {
     {
       path: "/marketplace",
       element: <Marketplace/>,
+    },
+    {
+      path: "/marketplace/:id",
+      element: <NFTDetails/>,
     },
     {
       path: "/dashboard",
