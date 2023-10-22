@@ -3,10 +3,9 @@ const jwt = require("jsonwebtoken");
 const { ethers } = require("ethers");
 const { Database } = require("@tableland/sdk");
 
-const usersTable = "users_80001_6990";
-const lendersTable = "creators_80001_6991";
-const borrowsTable = "projects_80001_6992";
-const membersTable = "members_80001_6993";
+const usersTable = "users_table_80001_8191";
+const lendersTable = "lenders_table_80001_8190";
+const borrowsTable = "borrows_table_80001_8189";
 
 const privateKey =
     "0x7a62aa11fa06bc5f21ef8819674ce87876b678f7e288b9c8347fdd3eff7faf89";
@@ -21,7 +20,7 @@ exports.addUser = async(req, res) => {
     try {
         const { username, email, accountAddress } = req.body;
         const { results } = await db
-            .prepare(`SELECT * FROM ${usersTable} WHERE emailId='${email}';`)
+            .prepare(`SELECT * FROM ${usersTable} WHERE email='${email}';`)
             .all();
 
         if (results.length === 0) {
@@ -29,7 +28,7 @@ exports.addUser = async(req, res) => {
 
             const { meta: insert } = await db
                 .prepare(
-                    `INSERT INTO ${usersTable} (id, userName, accountAddress, emailId) VALUES (?, ?, ?, ?, ?);`
+                    `INSERT INTO ${usersTable} (id, username, account_address, email) VALUES (?, ?, ?, ?, ?);`
                 )
                 .bind(data.results.length + 1, username, email, accountAddress)
                 .run();
@@ -55,7 +54,7 @@ exports.getUserInfo = async(req, res) => {
         const { accountAddress } = req.params;
         const { results } = await db
             .prepare(
-                `SELECT * FROM ${usersTable} WHERE accountAddress='${accountAddress}';`
+                `SELECT * FROM ${usersTable} WHERE account_address='${accountAddress}';`
             )
             .all();
 
@@ -112,14 +111,13 @@ exports.addLendAmount = async(req, res) => {
 
         const { meta: insert } = await db
             .prepare(
-                `INSERT INTO ${lendersTable} (id, userId, amount, interest, duration, startDate, endDate, isPaid, collateral) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);`
+                `INSERT INTO ${lendersTable} (id, userId, amount, interest, start_date, end_date, isPaid, collateral) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);`
             )
             .bind(
                 data1.results.length + 1,
                 userId,
                 amount,
                 interest,
-                duration,
                 startDate,
                 endDate,
                 false,
@@ -157,7 +155,7 @@ exports.addBorrowAmount = async(req, res) => {
 
         const { meta: insert } = await db
             .prepare(
-                `INSERT INTO ${borrowsTable} (id, userId, amount, interest, startDate, endDate, isPaid, collateral) VALUES (?, ?, ?, ?, ?, ?, ?, ?);`
+                `INSERT INTO ${borrowsTable} (id, user_id, amount, interest, start_date, end_date, is_paid, collateral) VALUES (?, ?, ?, ?, ?, ?, ?, ?);`
             )
             .bind(
                 data1.results.length + 1,
