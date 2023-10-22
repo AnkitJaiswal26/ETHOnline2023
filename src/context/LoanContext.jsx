@@ -15,6 +15,10 @@ export const LoanContext = React.createContext();
 
 export const useLoanContext = () => useContext(LoanContext);
 
+const axiosInstance = axios.create({
+  baseURL: "http://localhost:5000",
+});
+
 const fetchContract = (signerOrProvider) =>
   new ethers.Contract(LoanContractAddress, LoanContractABI, signerOrProvider);
 
@@ -36,13 +40,6 @@ export const LoanContextProvider = ({ children }) => {
     } catch (error) {
       console.log("Something went wrong while connecting with contract!");
     }
-  };
-
-  const isOwnerAddress = async () => {
-    const contract = await connectingWithSmartContract();
-    const data = await contract.OwnerIs();
-    console.log(data);
-    return data;
   };
 
   const fetchUserByAddress = async (userAddress) => {
