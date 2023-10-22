@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-
+// import "./RestrictHook.sol";
 
 contract LoanContract is ERC721URIStorage {
     struct User {
@@ -15,6 +15,8 @@ contract LoanContract is ERC721URIStorage {
     uint256 borrowerNFTCount;
 
     uint256 private _tokenIdCounter;
+    uint256 private _totalLenderNFTCount;
+    uint256 private _totalBorrowerNFTCount;
 
     struct ExchangeNFT {
         uint256 amountId;
@@ -47,7 +49,9 @@ contract LoanContract is ERC721URIStorage {
 
     // mapping(uint256 => ExchangeNFT[]) public myLenderToNFTMapping;
     // mapping(uint256 => ExchangeNFT[]) public myBorrowerToNFTMapping;
-    mapping(uint256 => ExchangeNFT) public totalNFTs;
+    // mapping(uint256 => ExchangeNFT) public totalNFTs;
+    mapping(uint256 => ExchangeNFT) public totalLenderNFTs;
+    mapping(uint256 => ExchangeNFT) public totalBorrowerNFTs;
     // mapping(uint256 => ExchangeNFT[]) public totalBorrowerNFTs;
 
     mapping(address => uint256) public userAddressToIdMapping;
@@ -98,9 +102,16 @@ contract LoanContract is ERC721URIStorage {
             onSale
         );
 
-        totalNFTs[_tokenIdCounter] = exchangeNFT;
+        ExchangeNFT memory LenderNFT = exchangeNFT;
+        ExchangeNFT memory BorrowerNFT = exchangeNFT;
+
+        // totalNFTs[_tokenIdCounter] = exchangeNFT;
+        totalLenderNFTs[_totalLenderNFTCount] = LenderNFT;
+        totalBorrowerNFTs[_totalBorrowerNFTCount] = BorrowerNFT;
 
         _tokenIdCounter += 1;
+        _totalLenderNFTCount += 1;
+        _totalBorrowerNFTCount += 1;
         // return exchangeNFT;
     }
 
@@ -139,6 +150,9 @@ contract LoanContract is ERC721URIStorage {
         payable(address(this)).transfer(msg.value);
         payable(lenderAddress).transfer(msg.value);
 
+        // addToRestrictList(borrowerAddress);
+        // addToRestrictList(lenderAddress);
+
         // myBorrowerToNFTMapping[borrowerId].push(newNFT);
 
         // totalBorrowerNFTs[borrowerNFTCount] = newNFT;
@@ -173,6 +187,9 @@ contract LoanContract is ERC721URIStorage {
             ""
         );
 
+
+        // addToRestrictList(borrowerAddress);
+        // addToRestrictList(lenderAddress);
         // myLenderToNFTMapping[lenderId].push(newNFT);
         // totalLenderNFTs[lenderNFTCount] = newNFT;
 
@@ -193,7 +210,7 @@ contract LoanContract is ERC721URIStorage {
         // uint256 _lenderId = userAddressToIdMapping[_lenderAddress];
         uint256 count = 0;
         for (uint256 i = 0; i < _tokenIdCounter; i++) {
-            if (totalNFTs[i].lenderAddress == _lenderAddress) {
+            if (totalLenderNFTs[i].lenderAddress == _lenderAddress) {
                 count += 1;
             }
         }
@@ -201,8 +218,8 @@ contract LoanContract is ERC721URIStorage {
         ExchangeNFT[] memory result = new ExchangeNFT[](count);
         count = 0;
         for (uint256 i = 0; i < _tokenIdCounter; i++) {
-            if (totalNFTs[i].lenderAddress == _lenderAddress) {
-                ExchangeNFT storage res = totalNFTs[i];
+            if (totalLenderNFTs[i].lenderAddress == _lenderAddress) {
+                ExchangeNFT storage res = totalLenderNFTs[i];
                 result[count++] = res;
             }
         }
@@ -215,7 +232,7 @@ contract LoanContract is ERC721URIStorage {
     ) public view returns (ExchangeNFT[] memory) {
         uint256 count = 0;
         for (uint256 i = 0; i < _tokenIdCounter; i++) {
-            if (totalNFTs[i].borrowerAddress == _borrowerAddress) {
+            if (totalLenderNFTs[i].borrowerAddress == _borrowerAddress) {
                 count += 1;
             }
         }
@@ -223,8 +240,8 @@ contract LoanContract is ERC721URIStorage {
         ExchangeNFT[] memory result = new ExchangeNFT[](count);
         count = 0;
         for (uint256 i = 0; i < _tokenIdCounter; i++) {
-            if (totalNFTs[i].borrowerAddress == _borrowerAddress) {
-                ExchangeNFT storage res = totalNFTs[i];
+            if (totalLenderNFTs[i].borrowerAddress == _borrowerAddress) {
+                ExchangeNFT storage res = totalLenderNFTs[i];
                 result[count++] = res;
             }
         }
@@ -233,21 +250,21 @@ contract LoanContract is ERC721URIStorage {
     }
 
     function createSale(uint256 id, uint256 price) public {
-        totalNFTs[id].onSale = price;
+        totalLenderNFTs[id].onSale = price;
     }
 
     function fetchAllSaleItems() public view returns (ExchangeNFT[] memory) {
         uint256 count = 0;
         for (uint i = 0; i < _tokenIdCounter; i++) {
-            if (totalNFTs[i].onSale > 0) {
+            if (totalLenderNFTs[i].onSale > 0) {
                 count += 1;
             }
         }
         ExchangeNFT[] memory result = new ExchangeNFT[](count);
         count = 0;
         for (uint i = 0; i < _tokenIdCounter; i++) {
-            if (totalNFTs[i].onSale > 0) {
-                ExchangeNFT storage cur = totalNFTs[i];
+            if (totalLenderNFTs[i].onSale > 0) {
+                ExchangeNFT storage cur = totalLenderNFTs[i];
                 result[count++] = cur;
             }
         }
@@ -257,21 +274,21 @@ contract LoanContract is ERC721URIStorage {
 
     function changeOwner(address newOwner, uint256 id) public payable {
         payable(address(this)).transfer(msg.value);
-        payable(totalNFTs[id].lenderAddress).transfer(msg.value);
+        payable(totalLenderNFTs[id].lenderAddress).transfer(msg.value);
 
-        totalNFTs[id].onSale = 0;
-        totalNFTs[id].lenderAddress = newOwner;
+        totalLenderNFTs[id].onSale = 0;
+        totalLenderNFTs[id].lenderAddress = newOwner;
     }
 
     function payToNFT(uint256 id) public payable {
         payable(address(this)).transfer(msg.value);
-        payable(totalNFTs[id].lenderAddress).transfer(msg.value);
+        payable(totalLenderNFTs[id].lenderAddress).transfer(msg.value);
     }
 
     function finalPayment(uint256 id) public payable {
         payable(address(this)).transfer(msg.value);
-        payable(totalNFTs[id].lenderAddress).transfer(msg.value);
+        payable(totalLenderNFTs[id].lenderAddress).transfer(msg.value);
 
-        totalNFTs[id].isPaid = true;
+        totalLenderNFTs[id].isPaid = true;
     }
 }
