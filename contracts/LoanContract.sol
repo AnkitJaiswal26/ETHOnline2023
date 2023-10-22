@@ -1,300 +1,277 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
-// import "hardhat/console.sol";
 
-import "./NFT.sol";
-import "./RestrictHook.sol";
-
-contract LoanContract {
-
-    struct User{
+contract LoanContract is ERC721URIStorage {
+    struct User {
         uint256 userId;
         string userName;
         address userAddress;
     }
 
-    struct LendAmount {
-        uint256 lendAmountId;
-        uint256 amount;
-        uint256 interest;
-        uint256 duration;
-        uint256 startDate;
-        uint256 endDate;
-        bool isPaid;
-        uint256 collateral;
-    }
-
-    struct BorrowAmount {
-        uint256 borrowAmountId;
-        uint256 amount;
-        uint256 interest;
-        uint256 duration;
-        uint256 startDate;
-        uint256 endDate;
-        bool isPaid;
-        uint256 collateral;
-    }
-
     uint256 userCount;
-    uint256 lendAmountCount;
-    uint256 borrowAmountCount;
     uint256 lenderNFTCount;
     uint256 borrowerNFTCount;
 
-    mapping (uint256 => User) public users;
-    mapping (uint256 => LendAmount[]) public userToLendAmountMapping;
-    mapping (uint256 => BorrowAmount[]) public userToBorrowAmountMapping;
+    uint256 private _tokenIdCounter;
 
-    // mapping (uint256 => LendAmount) public lendAmounts;
-    // mapping (uint256 => BorrowAmount) public borrowAmounts;
+    struct ExchangeNFT {
+        uint256 amountId;
+        address borrowerAddress;
+        address lenderAddress;
+        uint256 amount;
+        uint256 interest;
+        uint256 duration;
+        uint256 startDate;
+        uint256 endDate;
+        bool isPaid;
+        uint256 collateral;
+        uint256 onSale;
+    }
 
-    mapping (uint256 => LendAmount) public totalLendAmounts;
-    mapping (uint256 => BorrowAmount) public totalBorrowAmounts;
+    constructor(
+        address _borrowerAddress,
+        address _lenderAddress,
+        uint256 _AmountId,
+        uint256 amount,
+        uint256 interest,
+        uint256 duration,
+        uint256 startDate,
+        uint256 endDate,
+        uint256 collateral,
+        uint256 onSale
+    ) ERC721("GameItem", "ITM") {}
 
-    mapping (uint256 => NFT[]) public myLenderToNFTMapping; 
-    mapping (uint256 => NFT[]) public myBorrowerToNFTMapping; 
-    mapping (uint256 => NFT) public totalLenderNFTs; 
-    mapping (uint256 => NFT) public totalBorrowerNFTs; 
+    mapping(uint256 => User) public users;
 
-    mapping (address => uint256) public userAddressToIdMapping;
-    mapping (uint256 => uint256) public totalLendAmount;
-    mapping (uint256 => uint256) public totalBorrowAmount;
+    // mapping(uint256 => ExchangeNFT[]) public myLenderToNFTMapping;
+    // mapping(uint256 => ExchangeNFT[]) public myBorrowerToNFTMapping;
+    mapping(uint256 => ExchangeNFT) public totalNFTs;
+    // mapping(uint256 => ExchangeNFT[]) public totalBorrowerNFTs;
+
+    mapping(address => uint256) public userAddressToIdMapping;
+    mapping(uint256 => uint256) public totalLendAmount;
+    mapping(uint256 => uint256) public totalBorrowAmount;
 
     mapping(address => User) addressToUserMapping;
 
-    function fetchUserById(uint256 userId) public view returns (User memory) {
-        return users[userId];
+    function addLendAmount() public payable //     address _userAddress,
+    {
+        payable(address(this)).transfer(msg.value);
     }
 
-    function fetchUserByAddress(address userAddress) public view returns (User memory) {
-        return addressToUserMapping[userAddress];
-    }       
+    function addBorrowAmount() public payable // address _userAddress,
 
-    function addUser(string memory _userName, address _userAddress) public {
-        users[userCount] = User(userCount, _userName, _userAddress);
-        addressToUserMapping[_userAddress] = users[userCount];
-        userAddressToIdMapping[_userAddress] = userCount;
-        userCount++;
+    {
+        payable(address(this)).transfer(msg.value);
     }
 
-    function addLendAmount(address _userAddress, uint256 _amount, uint256 _interest, uint256 _duration, uint256 _startDate, uint256 _endDate, uint256 _collateral) public {
-        uint256 _userId = userAddressToIdMapping[_userAddress];
+    function mintNFT(
+        address _borrowerAddress,
+        address _lenderAddress,
+        uint256 amount,
+        uint256 interest,
+        uint256 duration,
+        uint256 startDate,
+        uint256 endDate,
+        uint256 collateral,
+        uint256 onSale,
+        string memory tokenURI
+    ) public {
+        uint256 newItemId = _tokenIdCounter;
 
-        userToLendAmountMapping[_userId].push(LendAmount(lendAmountCount, _amount, _interest, _duration, _startDate, _endDate, false, _collateral));
+        _safeMint(_lenderAddress, newItemId);
+        _setTokenURI(newItemId, tokenURI);
 
-        totalLendAmounts[lendAmountCount] = LendAmount(lendAmountCount, _amount, _interest, _duration, _startDate, _endDate, false, _collateral);
+        ExchangeNFT memory exchangeNFT = ExchangeNFT(
+            newItemId,
+            _borrowerAddress,
+            _lenderAddress,
+            amount,
+            interest,
+            duration,
+            startDate,
+            endDate,
+            false,
+            collateral,
+            onSale
+        );
 
-        totalLendAmount[_userId] += _amount;
+        totalNFTs[_tokenIdCounter] = exchangeNFT;
 
-        lendAmountCount++;
+        _tokenIdCounter += 1;
+        // return exchangeNFT;
     }
 
-    function addBorrowAmount(address _userAddress, uint256 _amount, uint256 _interest, uint256 _duration, uint256 _startDate, uint256 _endDate, uint256 _collateral) public {
-        uint256 _userId = userAddressToIdMapping[_userAddress];
+    function acceptLenderOffer(
+        address lenderAddress,
+        address borrowerAddress,
+        uint256 lenderId,
+        uint256 borrowerId,
+        uint256 lendAmountId,
+        uint256 amount,
+        uint256 interest,
+        uint256 duration,
+        uint256 startDate,
+        uint256 endDate,
+        uint256 collateral // address _lenderAddress, // address _borrowerAddress, // uint256 _lendAmountId
+    ) public payable {
+        mintNFT(
+            lenderAddress,
+            borrowerAddress,
+            amount,
+            interest,
+            duration,
+            startDate,
+            endDate,
+            collateral,
+            0,
+            ""
+        );
 
-        userToBorrowAmountMapping[_userId].push(BorrowAmount(borrowAmountCount, _amount, _interest, _duration, _startDate, _endDate, false, _collateral));
+        // myLenderToNFTMapping[lenderId].push(newNFT);
 
-        totalBorrowAmounts[borrowAmountCount] = BorrowAmount(borrowAmountCount, _amount, _interest, _duration, _startDate, _endDate, false, _collateral);
+        // totalLenderNFTs[lenderNFTCount] = newNFT;
 
-        totalBorrowAmount[_userId] += _amount;
-        borrowAmountCount++;
+        // lenderNFTCount++;
+
+        payable(address(this)).transfer(msg.value);
+        payable(lenderAddress).transfer(msg.value);
+
+        // myBorrowerToNFTMapping[borrowerId].push(newNFT);
+
+        // totalBorrowerNFTs[borrowerNFTCount] = newNFT;
+
+        // borrowerNFTCount++;
+
+        payable(borrowerAddress).transfer(amount);
     }
 
-    function acceptLenderOffer(address _lenderAddress, address _borrowerAddress, uint256 _lendAmountId) public payable {
-        uint256 _lenderId = userAddressToIdMapping[_lenderAddress];
+    function acceptBorrowerOffer(
+        address lenderAddress,
+        address borrowerAddress,
+        uint256 lenderId,
+        uint256 borrowerId,
+        uint256 amount,
+        uint256 interest,
+        uint256 duration,
+        uint256 startDate,
+        uint256 endDate,
+        uint256 collateral
+    ) public payable {
+        mintNFT(
+            lenderAddress,
+            borrowerAddress,
+            amount,
+            interest,
+            duration,
+            startDate,
+            endDate,
+            collateral,
+            0,
+            ""
+        );
 
-        uint256 _borrowerId = userAddressToIdMapping[_borrowerAddress];
+        // myLenderToNFTMapping[lenderId].push(newNFT);
+        // totalLenderNFTs[lenderNFTCount] = newNFT;
 
-        // require(userToLendAmountMapping[_lenderId][_lendAmountId].isPaid == false);
+        // lenderNFTCount++;
+        payable(lenderAddress).transfer(collateral);
+        // myBorrowerToNFTMapping[borrowerId].push(newNFT);
+        // totalBorrowerNFTs[borrowerNFTCount] = newNFT;
+        // borrowerNFTCount++;
 
-        uint256 length = userToLendAmountMapping[_lenderId].length;
-        LendAmount memory la;
+        payable(borrowerAddress).transfer(amount);
+    }
 
-        for (uint i = 0; i < length; i++) {
-            if(_lendAmountId == userToLendAmountMapping[_lenderId][i].lendAmountId) {
-                la = userToLendAmountMapping[_lenderId][i];
+    //Fetch functions for NFTs
+
+    function fetchLenderNFTs(
+        address _lenderAddress
+    ) public view returns (ExchangeNFT[] memory) {
+        // uint256 _lenderId = userAddressToIdMapping[_lenderAddress];
+        uint256 count = 0;
+        for (uint256 i = 0; i < _tokenIdCounter; i++) {
+            if (totalNFTs[i].lenderAddress == _lenderAddress) {
+                count += 1;
             }
         }
 
-        NFT newNFT = new NFT(_lenderAddress, _borrowerAddress, la.lendAmountId, la.amount, la.interest, la.duration, la.startDate, la.endDate, la.collateral);
-
-        myLenderToNFTMapping[_lenderId].push(newNFT);
-
-        totalLenderNFTs[lenderNFTCount] = newNFT;
-
-        lenderNFTCount++;
-
-        payable(_lenderAddress).transfer(la.collateral);
-
-        myBorrowerToNFTMapping[_borrowerId].push(newNFT);
-
-        totalBorrowerNFTs[borrowerNFTCount] = newNFT;
-
-        borrowerNFTCount++;
-        
-        payable(_borrowerAddress).transfer(la.amount);
-
-        RestrictHook.addToRestrictList(_borrowerAddress);
-        RestrictHook.addToRestrictList(_lenderAddress);
-        
-    }
-
-    function acceptBorrowerOffer(address _lenderAddress, address _borrowerAddress, uint256 _borrowAmountId) public payable {
-        uint256 _lenderId = userAddressToIdMapping[_lenderAddress];
-
-        uint256 _borrowerId = userAddressToIdMapping[_borrowerAddress];
-        // require(userToLendAmountMapping[_lenderId][_borrowAmountId].isPaid == false);
-
-        uint256 length = userToBorrowAmountMapping[_borrowerId].length;
-        BorrowAmount memory ba;
-
-        for (uint i = 0; i < length; i++) {
-            if(_borrowAmountId == userToBorrowAmountMapping[_borrowerId][i].borrowAmountId) {
-                ba = userToBorrowAmountMapping[_borrowerId][i];
+        ExchangeNFT[] memory result = new ExchangeNFT[](count);
+        count = 0;
+        for (uint256 i = 0; i < _tokenIdCounter; i++) {
+            if (totalNFTs[i].lenderAddress == _lenderAddress) {
+                ExchangeNFT storage res = totalNFTs[i];
+                result[count++] = res;
             }
         }
 
-        NFT newNFT = new NFT(_lenderAddress, _borrowerAddress, ba.borrowAmountId, ba.amount, ba.interest, ba.duration, ba.startDate, ba.endDate, ba.collateral);
-
-        myLenderToNFTMapping[_lenderId].push(newNFT);
-
-        totalLenderNFTs[lenderNFTCount] = newNFT;
-
-        lenderNFTCount++;
-
-        payable(_lenderAddress).transfer(ba.collateral);
-
-        myBorrowerToNFTMapping[_borrowerId].push(newNFT);
-
-        totalBorrowerNFTs[borrowerNFTCount] = newNFT;
-
-        borrowerNFTCount++;
-        
-        payable(_borrowerAddress).transfer(ba.amount);
-
-        RestrictHook.addToRestrictList(_borrowerAddress);
-        RestrictHook.addToRestrictList(_lenderAddress);
-        
+        return result;
     }
 
-    //Fetch functions for lend and borrow amounts
-
-    function fetchLendAmountByLender(address _lenderAddress) public view returns (LendAmount[] memory) {
-        uint256 _lenderId = userAddressToIdMapping[_lenderAddress];
-        return userToLendAmountMapping[_lenderId];
-    }
-
-    function fetchBorrowAmountByBorrower(address _borrowerAddress) public view returns (BorrowAmount[] memory) {
-        uint256 _borrowerId = userAddressToIdMapping[_borrowerAddress];
-        return userToBorrowAmountMapping[_borrowerId];
-    }
-
-    function fetchTotalLendAmountsLendAmounts() public view returns (LendAmount[] memory) {
-        LendAmount[] memory la;
-        for (uint i = 0; i < lendAmountCount; i++) {
-            la[i] = totalLendAmounts[i];
-        }
-        return la;
-    }   
-
-    function fetchTotalBorrowAmounts() public view returns (BorrowAmount[] memory) {
-        BorrowAmount[] memory ba;
-        for (uint i = 0; i < borrowAmountCount; i++) {
-            ba[i] = totalBorrowAmounts[i];
-        }
-        return ba;
-    }
-
-    function fetchLendAmountById(uint256 _lendAmountId) public view returns (LendAmount memory) {
-        return totalLendAmounts[_lendAmountId];
-    }
-
-    function fetchBorrowAmountById(uint256 _borrowAmountId) public view returns (BorrowAmount memory) {
-        return totalBorrowAmounts[_borrowAmountId];
-    }
-
-    function fetchSpecificLendAmountByLender (address _lenderAddress, uint256 _lendAmountId) public view returns (LendAmount memory) {
-        uint256 _lenderId = userAddressToIdMapping[_lenderAddress];
-        uint256 length = userToLendAmountMapping[_lenderId].length;
-        LendAmount memory la;
-
-        for (uint i = 0; i < length; i++) {
-            if(_lendAmountId == userToLendAmountMapping[_lenderId][i].lendAmountId) {
-                la = userToLendAmountMapping[_lenderId][i];
+    function fetchBorrowerNFTs(
+        address _borrowerAddress
+    ) public view returns (ExchangeNFT[] memory) {
+        uint256 count = 0;
+        for (uint256 i = 0; i < _tokenIdCounter; i++) {
+            if (totalNFTs[i].borrowerAddress == _borrowerAddress) {
+                count += 1;
             }
         }
 
-        return la;
-    }
-
-    function fetchSpecificBorrowAmountByBorrower (address _borrowerAddress, uint256 _borrowAmountId) public view returns (BorrowAmount memory) {
-        uint256 _borrowerId = userAddressToIdMapping[_borrowerAddress];
-        uint256 length = userToBorrowAmountMapping[_borrowerId].length;
-        BorrowAmount memory ba;
-
-        for (uint i = 0; i < length; i++) {
-            if(_borrowAmountId == userToBorrowAmountMapping[_borrowerId][i].borrowAmountId) {
-                ba = userToBorrowAmountMapping[_borrowerId][i];
+        ExchangeNFT[] memory result = new ExchangeNFT[](count);
+        count = 0;
+        for (uint256 i = 0; i < _tokenIdCounter; i++) {
+            if (totalNFTs[i].borrowerAddress == _borrowerAddress) {
+                ExchangeNFT storage res = totalNFTs[i];
+                result[count++] = res;
             }
         }
 
-        return ba;
+        return result;
     }
 
-    //Fetch functions for NFTs 
-
-    function fetchLenderNFTs(address _lenderAddress) public view returns (NFT[] memory) {
-        uint256 _lenderId = userAddressToIdMapping[_lenderAddress];
-        return myLenderToNFTMapping[_lenderId];
+    function createSale(uint256 id, uint256 price) public {
+        totalNFTs[id].onSale = price;
     }
 
-    function fetchBorrowerNFTs(address _borrowerAddress) public view returns (NFT[] memory) {
-        uint256 _borrowerId = userAddressToIdMapping[_borrowerAddress];
-        return myBorrowerToNFTMapping[_borrowerId];
-    }
-
-    function fetchLenderTotalNFTs() public view returns (NFT[] memory) {
-        NFT[] memory lendernft;
-        for (uint i = 0; i < lenderNFTCount; i++) {
-            lendernft[i] = totalLenderNFTs[i];
+    function fetchAllSaleItems() public view returns (ExchangeNFT[] memory) {
+        uint256 count = 0;
+        for (uint i = 0; i < _tokenIdCounter; i++) {
+            if (totalNFTs[i].onSale > 0) {
+                count += 1;
+            }
         }
-        return lendernft;
-    }
-
-    function fetchBorrowerTotalNFTs() public view returns (NFT[] memory) {
-        NFT[] memory borrowernft;
-        for (uint i = 0; i < borrowerNFTCount; i++) {
-            borrowernft[i] = totalBorrowerNFTs[i];
+        ExchangeNFT[] memory result = new ExchangeNFT[](count);
+        count = 0;
+        for (uint i = 0; i < _tokenIdCounter; i++) {
+            if (totalNFTs[i].onSale > 0) {
+                ExchangeNFT storage cur = totalNFTs[i];
+                result[count++] = cur;
+            }
         }
-        return borrowernft;
+
+        return result;
     }
 
-    // function payLendAmount(uint256 _userId, uint256 _amount) public {
-    //     uint256 totalAmount = totalLendAmount[_userId];
-    //     require(totalAmount >= _amount, "Amount is greater than total amount");
-    //     totalLendAmount[_userId] -= _amount;
-    // }
+    function changeOwner(address newOwner, uint256 id) public payable {
+        payable(address(this)).transfer(msg.value);
+        payable(totalNFTs[id].lenderAddress).transfer(msg.value);
 
-    // function payBorrowAmount(uint256 _userId, uint256 _amount) public {
-    //     uint256 totalAmount = totalBorrowAmount[_userId];
-    //     require(totalAmount >= _amount, "Amount is greater than total amount");
-    //     totalBorrowAmount[_userId] -= _amount;
-    // }
+        totalNFTs[id].onSale = 0;
+        totalNFTs[id].lenderAddress = newOwner;
+    }
 
+    function payToNFT(uint256 id) public payable {
+        payable(address(this)).transfer(msg.value);
+        payable(totalNFTs[id].lenderAddress).transfer(msg.value);
+    }
 
-    // function getTotalLendAmount(uint256 _userId) public view returns (uint256) {
-    //     return totalLendAmount[_userId];
-    // }
+    function finalPayment(uint256 id) public payable {
+        payable(address(this)).transfer(msg.value);
+        payable(totalNFTs[id].lenderAddress).transfer(msg.value);
 
-    // function getTotalBorrowAmount(uint256 _userId) public view returns (uint256) {
-    //     return totalBorrowAmount[_userId];
-    // }
-
-    // function getUserCount() public view returns (uint256) {
-    //     return userCount;
-    // }
-
-
-
+        totalNFTs[id].isPaid = true;
+    }
 }

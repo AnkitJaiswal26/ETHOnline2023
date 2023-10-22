@@ -1,36 +1,37 @@
 import {
-  ArrowPathIcon,
-  CloudArrowUpIcon,
-  FingerPrintIcon,
-  LockClosedIcon,
+  ComputerDesktopIcon,
+  DocumentChartBarIcon,
+  ScaleIcon,
+  UsersIcon,
 } from "@heroicons/react/24/outline";
 
 export const features = [
   {
-    name: "Push to deploy",
+    name: "Tailor-Made Solutions",
     description:
-      "Morbi viverra dui mi arcu sed. Tellus semper adipiscing suspendisse semper morbi. Odio urna massa nunc massa.",
-    icon: CloudArrowUpIcon,
+      "Create custom lending agreements by choosing collateral, interest rate, duration, installments, and the crypto asset of your choice.",
+    icon: ComputerDesktopIcon, // Use an appropriate icon
   },
   {
-    name: "SSL certificates",
+    name: "Financial NFTs",
     description:
-      "Sit quis amet rutrum tellus ullamcorper ultricies libero dolor eget. Sem sodales gravida quam turpis enim lacus amet.",
-    icon: LockClosedIcon,
+      "The app mints a unique NFT for each party in the agreement, whether it's a loan or debt. These financial NFTs represent ownership in the agreement.",
+    icon: DocumentChartBarIcon, // Use an appropriate icon
   },
   {
-    name: "Simple queues",
+    name: "Secondary Market Trading",
     description:
-      "Quisque est vel vulputate cursus. Risus proin diam nunc commodo. Lobortis auctor congue commodo diam neque.",
-    icon: ArrowPathIcon,
+      "Trade your financial NFTs on secondary markets. This opens up opportunities for various financial products and allows users to exit agreements at market prices.",
+    icon: ScaleIcon, // Use an appropriate icon
   },
   {
-    name: "Advanced security",
+    name: "P2P and No Intermediaries",
     description:
-      "Arcu egestas dolor vel iaculis in ipsum mauris. Tincidunt mattis aliquet hac quis. Id hac maecenas ac donec pharetra eget.",
-    icon: FingerPrintIcon,
+      "The platform operates as a true P2P lending solution with no intermediaries. This results in better rates and direct interaction between parties.",
+    icon: UsersIcon, // Use an appropriate icon
   },
 ];
+
 
 export const offers = [
   {
@@ -74,7 +75,7 @@ export const offers = [
         Lend_Ammount: "5.00 FTM",
         Time: "60",
         Payment: 7,
-        APR: '6%',
+        APR: "6%",
       },
     ],
     liquidity_offers: [],
@@ -100,4 +101,137 @@ export const offers = [
     price: "$410",
     M_APR: "20%",
   },
+];
+
+export const nfts = [
+  {
+    id: 1,
+    borrowerAddress: "0xAddress1",
+    lenderAddress: "0xAddress2",
+    amount: 1000,
+    interest: 50,
+    duration: 30,
+    startDate: 1672723200, // Use Unix timestamp for dates
+    endDate: 1675305600,
+    isPaid: true,
+    collateral: 500,
+    tokenURI: "https://example.com/token1",
+  },
+  {
+    id: 2,
+    borrowerAddress: "0xAddress3",
+    lenderAddress: "0xAddress4",
+    amount: 1500,
+    interest: 75,
+    duration: 45,
+    startDate: 1672723200,
+    endDate: 1675305600,
+    isPaid: false,
+    collateral: 800,
+    tokenURI: "https://example.com/token2",
+  },
+  {
+    id: 3,
+    borrowerAddress: "0xAddress5",
+    lenderAddress: "0xAddress6",
+    amount: 2000,
+    interest: 100,
+    duration: 60,
+    startDate: 1672723200,
+    endDate: 1675305600,
+    isPaid: false,
+    collateral: 900,
+    tokenURI: "https://example.com/token3",
+  },
+  {
+    id: 4,
+    borrowerAddress: "0xAddress7",
+    lenderAddress: "0xAddress8",
+    amount: 800,
+    interest: 40,
+    duration: 15,
+    startDate: 1672723200,
+    endDate: 1675305600,
+    isPaid: true,
+    collateral: 300,
+    tokenURI: "https://example.com/token4",
+  },
+  {
+    id: 5,
+    borrowerAddress: "0xAddress9",
+    lenderAddress: "0xAddress10",
+    amount: 2500,
+    interest: 125,
+    duration: 75,
+    startDate: 1672723200,
+    endDate: 1675305600,
+    isPaid: false,
+    collateral: 1200,
+    tokenURI: "https://example.com/token5",
+  },
+  {
+    id: 6,
+    borrowerAddress: "0xAddress11",
+    lenderAddress: "0xAddress12",
+    amount: 3500,
+    interest: 175,
+    duration: 90,
+    startDate: 1672723200,
+    endDate: 1675305600,
+    isPaid: true,
+    collateral: 1500,
+    tokenURI: "https://example.com/token6",
+  },
+  {
+    id: 7,
+    borrowerAddress: "0xAddress13",
+    lenderAddress: "0xAddress14",
+    amount: 1200,
+    interest: 60,
+    duration: 35,
+    startDate: 1672723200,
+    endDate: 1675305600,
+    isPaid: false,
+    collateral: 600,
+    tokenURI: "https://example.com/token7",
+  },
+  {
+    id: 8,
+    borrowerAddress: "0xAddress15",
+    lenderAddress: "0xAddress16",
+    amount: 1800,
+    interest: 90,
+    duration: 50,
+    startDate: 1672723200,
+    endDate: 1675305600,
+    isPaid: true,
+    collateral: 700,
+    tokenURI: "https://example.com/token8",
+  },
+  {
+    id: 9,
+    borrowerAddress: "0xAddress17",
+    lenderAddress: "0xAddress18",
+    amount: 2800,
+    interest: 140,
+    duration: 70,
+    startDate: 1672723200,
+    endDate: 1675305600,
+    isPaid: false,
+    collateral: 1000,
+    tokenURI: "https://example.com/token9",
+  },
+  {
+    id: 10,
+    borrowerAddress: "0xAddress19",
+    lenderAddress: "0xAddress20",
+    amount: 1600,
+    interest: 80,
+    duration: 40,
+    startDate: 1672723200,
+    endDate: 1675305600,
+    isPaid: true,
+    collateral: 500,
+    tokenURI: "https://example.com/token10",
+  }
 ];

@@ -17,6 +17,7 @@ const BorrowOffer = () => {
               data={offers}
               lengthCols={["offers", "liquidity_offers"]}
               skipCols={["id"]}
+              convertTime={['startDate','endDate']}
             />
         </div>
         </div>
